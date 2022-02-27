@@ -48,7 +48,7 @@ class lvxinfeiv1(AbstractEnv):
                 "lateral": True
             },
             "simulation_frequency": 15,
-            "policy_frequency": 5,
+            "policy_frequency": 10,
             "duration": 500,
             "collision_reward": -200,
             "lane_centering_cost": 1,
