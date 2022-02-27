@@ -10,6 +10,7 @@ from highway_env.road.lane import LineType, StraightLane, CircularLane, SineLane
 from highway_env.road.road import Road, RoadNetwork
 from highway_env.vehicle.behavior import IDMVehicle
 from highway_env.vehicle.objects import Landmark
+from highway_env.road.lane import AbstractLane
 
 import re
 #文件位置C:\Users\Administrator\AppData\Local\Programs\Python\Python36\Lib\site-packages\highway_env\envs\lvxinfei_env
@@ -90,6 +91,9 @@ class lvxinfeiv0(AbstractEnv):
         longitudinal, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
         lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
         action_reward = 1/(1+self.config["action_reward"]*self.vehicle.speed)
+        # aa = self.lane.heading_at(longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
+        aa = self.vehicle.lane.heading_at(longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
+        print(aa)
         # reward = \
         #     + lane_centering_reward \
         #     + (self.config["arrival_reward"]) * self.is_success() \

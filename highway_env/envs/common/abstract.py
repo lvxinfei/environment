@@ -15,6 +15,7 @@ from highway_env.vehicle.behavior import IDMVehicle, LinearVehicle
 from highway_env.vehicle.controller import MDPVehicle
 from highway_env.vehicle.kinematics import Vehicle
 
+
 Observation = np.ndarray
 
 
@@ -168,7 +169,8 @@ class AbstractEnv(gym.Env):
             'sin_h': self.vehicle.direction[1],
             "cos_h": self.vehicle.direction[0],
             'cos_d': self.vehicle.destination_direction[0],
-            'sin_d': self.vehicle.destination_direction[1]
+            'sin_d': self.vehicle.destination_direction[1],
+            # "road heading":lane.AbstractLane.heading_at()
         }
         try:
             info["cost"] = self._cost(action)
