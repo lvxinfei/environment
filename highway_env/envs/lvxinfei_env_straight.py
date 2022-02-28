@@ -55,7 +55,7 @@ class lvxinfeiv1(AbstractEnv):
             "action_reward": 0.05,
             "arrival_reward": 100,
             "controlled_vehicles": 1,
-            "other_vehicles": 4,
+            "other_vehicles": 1,
             "reward_speed_range": [20, 30],
             "lane_change_reward": 0,   # The reward received at each lane change action.
             "high_speed_reward": 0.4,

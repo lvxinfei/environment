@@ -157,10 +157,12 @@ class AbstractEnv(gym.Env):
         :param action: current action
         :return: info dict
         """
+        road_heading = self.vehicle.lane.heading_at(longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
+
         info = {
             "speed": self.vehicle.speed,
             "crashed": self.vehicle.crashed,
-            "vehicle heading": self.vehicle.heading,#车辆相对于大地坐标系的指向角，以pi为单位
+            "vehicle heading": self.vehicle.heading,#车辆相对于大地坐标系的指向角，以[rad]为单位
             "action": action,
             'x': self.vehicle.position[0],
             'y': self.vehicle.position[1],
@@ -170,7 +172,7 @@ class AbstractEnv(gym.Env):
             "cos_h": self.vehicle.direction[0],
             'cos_d': self.vehicle.destination_direction[0],
             'sin_d': self.vehicle.destination_direction[1],
-            "road heading":self.vehicle.lane.heading_at(longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
+            "road heading":road_heading
         }
         try:
             info["cost"] = self._cost(action)
