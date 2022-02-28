@@ -170,7 +170,7 @@ class AbstractEnv(gym.Env):
             "cos_h": self.vehicle.direction[0],
             'cos_d': self.vehicle.destination_direction[0],
             'sin_d': self.vehicle.destination_direction[1],
-            # "road heading":lane.AbstractLane.heading_at()
+            "road heading":self.vehicle.lane.heading_at(longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
         }
         try:
             info["cost"] = self._cost(action)
