@@ -45,7 +45,7 @@ class lvxinfeiv2(AbstractEnv):
             },
             "simulation_frequency": 15,
             "policy_frequency": 10,
-            "duration": 300,
+            "duration": 700,
             "collision_reward": -100,
             "lane_centering_cost": 3,
             "action_reward": 0.05,
@@ -87,10 +87,16 @@ class lvxinfeiv2(AbstractEnv):
 
     def _reward(self, action: np.ndarray) -> float:#奖励函数部分
         longitudinal, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
+        road_heading = self.vehicle.lane.heading_at(
+            longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
+        vehicle_heading = self.vehicle.heading
+        j_c = abs(road_heading - vehicle_heading)
         lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
         reward = \
             + (self.config["arrival_reward"]) * self.is_success() \
-            + lane_centering_reward
+            + lane_centering_reward \
+            - (10*j_c) \
+            + utils.lmap(self.vehicle.speed, [25, 40], [2, 3])
 
         if self.vehicle.crashed or not self.vehicle.on_road:
           reward = self.config["collision_reward"]

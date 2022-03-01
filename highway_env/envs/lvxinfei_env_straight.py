@@ -49,7 +49,7 @@ class lvxinfeiv1(AbstractEnv):
             },
             "simulation_frequency": 15,
             "policy_frequency": 10,
-            "duration": 500,
+            "duration": 700,
             "collision_reward": -200,
             "lane_centering_cost": 1,
             "action_reward": 0.05,
@@ -99,7 +99,8 @@ class lvxinfeiv1(AbstractEnv):
         reward = \
             + (self.config["arrival_reward"]) * self.is_success() \
             + lane_centering_reward \
-            - 3*abs(self.vehicle.heading)
+            - 3*abs(self.vehicle.heading) \
+            + 0.09*self.vehicle.speed
         # print(self.vehicle.heading)
         if self.vehicle.crashed or not self.vehicle.on_road:
           reward = self.config["collision_reward"]
