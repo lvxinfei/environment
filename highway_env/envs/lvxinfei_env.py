@@ -45,8 +45,8 @@ class lvxinfeiv0(AbstractEnv):
                 "lateral": True
             },
             "simulation_frequency": 15,
-            "policy_frequency": 10,
-            "duration": 700,
+            "policy_frequency": 7,
+            "duration": 1500,
             "collision_reward": -200,
             "lane_centering_cost": 1,
             "action_reward": 0.05,
@@ -91,8 +91,6 @@ class lvxinfeiv0(AbstractEnv):
         longitudinal, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
         lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
         action_reward = 1/(1+self.config["action_reward"]*self.vehicle.speed)
-        aa = self.vehicle.lane.heading_at(longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
-        # print(aa)
         # reward = \
         #     + lane_centering_reward \
         #     + (self.config["arrival_reward"]) * self.is_success() \

@@ -44,7 +44,7 @@ class lvxinfeiv2(AbstractEnv):
                 "lateral": True
             },
             "simulation_frequency": 15,
-            "policy_frequency": 10,
+            "policy_frequency": 7,
             "duration": 700,
             "collision_reward": -100,
             "lane_centering_cost": 3,
@@ -86,17 +86,21 @@ class lvxinfeiv2(AbstractEnv):
 
 
     def _reward(self, action: np.ndarray) -> float:#奖励函数部分
+        #限制车辆与道路中线的距离
         longitudinal, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
+        lane_centering_reward = 1 / (1 + self.config["lane_centering_cost"] * lateral ** 2)
+        #限制车辆的横摆
         road_heading = self.vehicle.lane.heading_at(
-            longitudinal=self.vehicle.lane.local_coordinates(self.vehicle.position)[0])
+            longitudinal=longitudinal)
         vehicle_heading = self.vehicle.heading
         j_c = abs(road_heading - vehicle_heading)
-        lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
+        #限制车辆的速度区间
+        speed_reward = utils.lmap(self.vehicle.speed, [20, 30], [0, 1])
         reward = \
+            + speed_reward \
             + (self.config["arrival_reward"]) * self.is_success() \
             + lane_centering_reward \
-            - (10*j_c) \
-            + utils.lmap(self.vehicle.speed, [25, 40], [2, 3])
+            + 1 / (1 + self.config["lane_centering_cost"] * j_c ** 2)
 
         if self.vehicle.crashed or not self.vehicle.on_road:
           reward = self.config["collision_reward"]
@@ -124,12 +128,12 @@ class lvxinfeiv2(AbstractEnv):
         speedlimits = [None, 10, 10, 10, 10, 10, 10, 10, 10]
 
         # Initialise First Lane
-        lane = StraightLane([42, 0], [60, 0], line_types=(LineType.CONTINUOUS, LineType.STRIPED), width=5, speed_limit=speedlimits[1])
+        lane = StraightLane([0, 0], [60, 0], line_types=(LineType.CONTINUOUS, LineType.STRIPED), width=5, speed_limit=speedlimits[1])
         self.lane = lane
 
         # Add Lanes to Road Network - Straight Section
         net.add_lane("a", "b", lane)
-        net.add_lane("a", "b", StraightLane([42, 5], [60, 5], line_types=(LineType.STRIPED, LineType.CONTINUOUS), width=5, speed_limit=speedlimits[1]))
+        net.add_lane("a", "b", StraightLane([0, 5], [60, 5], line_types=(LineType.STRIPED, LineType.CONTINUOUS), width=5, speed_limit=speedlimits[1]))
 
         # 2 - Circular Arc #1
         center1 = [60, -70]
@@ -158,8 +162,8 @@ class lvxinfeiv2(AbstractEnv):
         for i in range(self.config["controlled_vehicles"]):
             lane_index = ("a", "b", rng.randint(1)) if i == 0 else \
                 self.road.network.random_lane_index(rng)
-            controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=None,
-                                                                             longitudinal=rng.uniform(20,50))#20,50
+            controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=0,
+                                                                             longitudinal=rng.uniform(0,1))#20,50
             controlled_vehicle.SPEED_MIN = 0
             controlled_vehicle.SPEED_MAX = 10
             controlled_vehicle.SPEED_COUNT = 3
